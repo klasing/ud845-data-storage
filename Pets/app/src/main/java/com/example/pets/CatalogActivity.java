@@ -1,5 +1,6 @@
 package com.example.pets;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,6 +25,7 @@ public class CatalogActivity extends AppCompatActivity {
      *                  declare
      */
     private static final String LOG_TAG = "***" + CatalogActivity.class.getSimpleName();
+    private PetDbHelper mDbHelper;
 
     /*************************************************************************
      *                  onCreate
@@ -44,6 +46,9 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
+        // instantiate class PetDbHelper
+        mDbHelper = new PetDbHelper(this);
+
         displayDatabaseInfo();
     }
 
@@ -52,8 +57,6 @@ public class CatalogActivity extends AppCompatActivity {
      */
     private void displayDatabaseInfo() {
         Log.i(LOG_TAG, "displayDatabaseInfo()");
-        // instantiate class PetDbHelper
-        PetDbHelper mDbHelper = new PetDbHelper(this);
         // create and/or open database to read
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         // perform a SELECT with Cursor
@@ -65,7 +68,24 @@ public class CatalogActivity extends AppCompatActivity {
             // close cursor
             cursor.close();
         }
+    }
 
+    /*************************************************************************
+     * insertPet
+     */
+    private void insertPet() {
+        Log.i(LOG_TAG, "insertPet()");
+        // get database in write mode
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+
+        // create ContentValues object, column names are used as key
+        ContentValues values = new ContentValues();
+        values.put(PetEntry.COLUMN_PET_NAME, "Toto");
+        values.put(PetEntry.COLUMN_PET_BREED, "Terrier");
+        values.put(PetEntry.COLUMN_PET_GENDER, PetEntry.GENDER_MALE);
+        values.put(PetEntry.COLUMN_PET_WEIGHT, 7);
+
+        long newRowId = db.insert(PetEntry.TABLE_NAME, null, values);
 
     }
 
@@ -94,7 +114,8 @@ public class CatalogActivity extends AppCompatActivity {
         // user clicked a menu item in the app bar overflow menu
         switch (item.getItemId()) {
             case R.id.action_insert_dummy_data:
-                // TODO
+                insertPet();
+                displayDatabaseInfo();
                 return true;
             case R.id.action_delete_all_entries:
                 // TODO
