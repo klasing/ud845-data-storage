@@ -1,7 +1,7 @@
 package com.example.pets;
 
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +16,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.pets.data.PetContract;
 import com.example.pets.data.PetContract.PetEntry;
-import com.example.pets.data.PetDbHelper;
 
 public class EditorActivity extends AppCompatActivity {
 
@@ -109,10 +109,10 @@ public class EditorActivity extends AppCompatActivity {
         int weight = Integer.parseInt(weightString);
 
         // create database helper
-        PetDbHelper mDbHelper = new PetDbHelper(this);
+        //PetDbHelper mDbHelper = new PetDbHelper(this);
 
         // get database in write mode
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        //SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         // create ContentValues object
         ContentValues values = new ContentValues();
@@ -122,14 +122,22 @@ public class EditorActivity extends AppCompatActivity {
         values.put(PetEntry.COLUMN_PET_WEIGHT, weight);
 
         // insert a new row, returning the ID of new row
-        long newRowId = db.insert(PetEntry.TABLE_NAME, null, values);
+        //long newRowId = db.insert(PetEntry.TABLE_NAME, null, values);
 
         // show toast message depending on whether or not the insertion was successful
-        if (newRowId == -1) {
+        //if (newRowId == -1) {
             // an error occurred during insertion
-            Toast.makeText(this, "Error with saving pet", Toast.LENGTH_SHORT).show();
+        //    Toast.makeText(this, "Error with saving pet", Toast.LENGTH_SHORT).show();
+        //} else {
+        //    Toast.makeText(this, "Pet saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
+        //}
+        Uri newUri = getContentResolver().insert(PetContract.CONTENT_URI, values);
+
+        if (newUri == null) {
+            Toast.makeText(this, getString(R.string.editor_insert_pet_failed), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Pet saved with row id: " + newRowId, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.editor_insert_pet_successful), Toast.LENGTH_SHORT).show();
+
         }
     }
 
