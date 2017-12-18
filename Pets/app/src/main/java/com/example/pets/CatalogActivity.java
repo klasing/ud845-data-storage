@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.example.pets.data.PetContract;
 import com.example.pets.data.PetContract.PetEntry;
@@ -47,10 +47,14 @@ public class CatalogActivity extends AppCompatActivity {
             }
         });
 
+        ListView petListView = findViewById(R.id.list);
+        View emptyView = findViewById(R.id.empty_view);
+        petListView.setEmptyView(emptyView);
+
         // instantiate class PetDbHelper
         mDbHelper = new PetDbHelper(this);
 
-        displayDatabaseInfo();
+        //displayDatabaseInfo();
     }
 
     /*************************************************************************
@@ -85,39 +89,43 @@ public class CatalogActivity extends AppCompatActivity {
 //                null,
 //                null);
         Cursor cursor = getContentResolver().query(PetContract.CONTENT_URI, projection, null, null, null);
-        TextView displayView = findViewById(R.id.text_view_pet);
+        //TextView displayView = findViewById(R.id.text_view_pet);
+        // replace TextView with ListView
+        ListView petListView = findViewById(R.id.list);
 
-        try {
-            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
-            displayView.append(PetEntry._ID  + " - " +
-                PetEntry.COLUMN_PET_NAME  + " - " +
-                PetEntry.COLUMN_PET_BREED  + " - " +
-                PetEntry.COLUMN_PET_GENDER  + " - " +
-                PetEntry.COLUMN_PET_WEIGHT + "\n");
+//        try {
+//            displayView.setText("The pets table contains " + cursor.getCount() + " pets.\n\n");
+//            displayView.append(PetEntry._ID  + " - " +
+//                PetEntry.COLUMN_PET_NAME  + " - " +
+//                PetEntry.COLUMN_PET_BREED  + " - " +
+//                PetEntry.COLUMN_PET_GENDER  + " - " +
+//                PetEntry.COLUMN_PET_WEIGHT + "\n");
             // figure out the index of each column
-            int iColumnIndex = cursor.getColumnIndex(PetEntry._ID);
-            int nameColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_NAME);
-            int breedColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_BREED);
-            int genderColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_GENDER);
-            int weightColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_WEIGHT);
+//            int iColumnIndex = cursor.getColumnIndex(PetEntry._ID);
+//            int nameColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_NAME);
+//            int breedColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_BREED);
+//            int genderColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_GENDER);
+//            int weightColumnIndex = cursor.getColumnIndex(PetEntry.COLUMN_PET_WEIGHT);
             // iterate through all the returned rows in the cursor
-            while (cursor.moveToNext()) {
-                // use the index to extract at the current cursor
-                int currentID = cursor.getInt(iColumnIndex);
-                String currentName = cursor.getString(nameColumnIndex);
-                String currentBreed = cursor.getString(breedColumnIndex);
-                int currentGender = cursor.getInt(genderColumnIndex);
-                int currentWeight = cursor.getInt(weightColumnIndex);
-                // display the values from each column in the TextView
-                displayView.append("\n" + currentID + " - " +
-                    currentName + " - " +
-                    currentBreed + " - " +
-                    currentGender + " - " +
-                    currentWeight);
-            }
-        } finally {
-          cursor.close();
-        }
+//            while (cursor.moveToNext()) {
+//                // use the index to extract at the current cursor
+//                int currentID = cursor.getInt(iColumnIndex);
+//                String currentName = cursor.getString(nameColumnIndex);
+//                String currentBreed = cursor.getString(breedColumnIndex);
+//                int currentGender = cursor.getInt(genderColumnIndex);
+//                int currentWeight = cursor.getInt(weightColumnIndex);
+//                // display the values from each column in the TextView
+//                displayView.append("\n" + currentID + " - " +
+//                    currentName + " - " +
+//                    currentBreed + " - " +
+//                    currentGender + " - " +
+//                    currentWeight);
+//            }
+//        } finally {
+//          cursor.close();
+//        }
+        PetCursorAdapter adapter = new PetCursorAdapter(this, cursor);
+        petListView.setAdapter(adapter);
     }
 
     /*************************************************************************
